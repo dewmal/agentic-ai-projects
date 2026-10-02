@@ -20,3 +20,35 @@ for q in range(2):
     result = agent_1.run_sync(result).output
     print(f"A1 :{result}")
 ```
+
+
+-----
+
+```py
+from dotenv import load_dotenv
+from pydantic_ai import Agent
+
+load_dotenv()
+
+agent_r = Agent("groq:openai/gpt-oss-120b",instructions="Research the toipic and return 5 main points.")
+agent_w = Agent("groq:openai/gpt-oss-120b",instructions="Create max 300 word article using given main points")
+agent_re = Agent("groq:openai/gpt-oss-120b",instructions="Read the input and fix issues and make sure it is readable")
+
+task = "Explain what is AI and How it works"
+
+print(f"Task >> {task}")
+
+points = agent_r.run_sync(task).output
+print(f"\nResearch Points >> {points}")
+
+
+article = agent_w.run_sync(points).output
+print(f"\nWriter Article >> {article}")
+
+
+final_article = agent_re.run_sync(article).output
+print(f"\nFinal Article >> {final_article}")
+
+
+
+```
