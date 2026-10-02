@@ -52,3 +52,52 @@ print(f"\nFinal Article >> {final_article}")
 
 
 ```
+
+
+----------------------
+
+```py
+import asyncio
+
+from dotenv import load_dotenv
+from pydantic_ai import Agent
+
+load_dotenv()
+
+agent_r = Agent(
+    "groq:openai/gpt-oss-120b",
+    instructions="Research the toipic and return 5 main points.",
+)
+agent_w_1 = Agent(
+    "groq:openai/gpt-oss-120b",
+    instructions="Create max 100 word summary note using given main points and foucs about technical examples",
+)
+agent_w_2 = Agent(
+    "groq:openai/gpt-oss-120b",
+    instructions="Create max 100 word summary note  using given main points and foucs about day today examples",
+)
+agent_final_writer = Agent(
+    "groq:openai/gpt-oss-120b", instructions="Create Final Article"
+)
+
+task = "Explain what is AI and How it works"
+
+print(f"Task >> {task}")
+
+
+async def main():
+    points = (await agent_r.run(task)).output
+    print(f"\nResearch Points >> {points}")
+
+    results = await asyncio.gather(
+        agent_w_1.run(points),
+        agent_w_2.run(points)
+    )
+
+    final_article = (await agent_final_writer.run(f"{results[0].output} - {results[1].output}")).output
+    print(f"\nFinal Article >> {final_article}")
+
+
+if "__main__" == __name__:
+    asyncio.run(main())
+```
